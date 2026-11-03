@@ -1,0 +1,40 @@
+{
+  "name": "@eweihs/engineering-standards",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared coding conventions, component and styling rules, and lint configuration.",
+  "license": "MIT",
+  "repository": "github:eweihs/engineering-standards",
+  "type": "module",
+  "exports": {
+    "./eslint/base": "./eslint/base.js",
+    "./eslint/next": "./eslint/next.js",
+    "./eslint/nest": "./eslint/nest.js",
+    "./prettier": "./prettier.js",
+    "./tsconfig/base.json": "./tsconfig/base.json",
+    "./guidelines/*": "./guidelines/*"
+  },
+  "files": [
+    "eslint",
+    "guidelines",
+    "tsconfig",
+    "prettier.js"
+  ],
+  "dependencies": {
+    "@eslint/js": "^9.39.0",
+    "eslint-config-next": "^16.4.4",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "typescript-eslint": "^8.72.1"
+  },
+  "peerDependencies": {
+    "eslint": "^9.39.0",
+    "prettier": "^3.9.0",
+    "typescript": "^5.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.0",
+    "prettier": "^3.9.0",
+    "typescript": "^5.9.0"
+  }
+}
