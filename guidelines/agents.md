@@ -18,6 +18,12 @@ The same command runs in three places:
 
 Never weaken a check to make it pass. That means no disabled lint rules, no skipped or deleted tests, no looser types and no `--no-verify`. If a check looks wrong, stop and say so.
 
+## Review Before a Pull Request
+
+Before opening a pull request, the agent runs `/review-branch`. A fresh agent that has not seen how the code was written reviews the branch against the shared review instructions.
+
+The author fixes every blocking finding, or says in the pull request description why it does not hold. The pull request guideline describes the layers after that.
+
 ## Where an Instruction Goes
 
 Put each instruction in the narrowest place that works:

@@ -11,6 +11,7 @@ My personal, opinionated conventions and tooling for my TypeScript projects. It 
 | `guidelines/git.md` | All projects |
 | `guidelines/testing.md` | All projects |
 | `guidelines/agents.md` | All projects |
+| `guidelines/pull-requests.md` | All projects |
 | `guidelines/components.md` | Frontends |
 | `guidelines/hooks.md` | Frontends |
 | `guidelines/styling.md` | Frontends |
@@ -20,7 +21,9 @@ My personal, opinionated conventions and tooling for my TypeScript projects. It 
 | `prettier.js` | All projects |
 | `tsconfig/base.json` | All projects |
 | `.github/workflows/check.yml` | Reusable CI workflow for all projects |
+| `.github/workflows/review.yml` | Reusable agent review workflow for all projects |
 | `claude/check-on-stop.js` | Claude Code hook for all projects |
+| `claude/review.md` | Review instructions for agents, locally and in CI |
 
 Project-specific facts stay in the project: its purpose, routes, deployment, brand tokens and components.
 
@@ -145,6 +148,47 @@ A reusable workflow cannot start service containers for its caller. A project wh
 
 Make the `check` job a required status check in the repository's branch protection, so a red pull request cannot merge.
 
+### Agent review
+
+`.github/workflows/review.yml` in the project:
+
+```yaml
+name: Review
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  review:
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    uses: eweihs/engineering-standards/.github/workflows/review.yml@v3.1.0
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+```
+
+An agent reviews the pull request against `claude/review.md` and comments on it: one inline comment per finding and one summary. It can read the code and comment, nothing else.
+
+Before the first run:
+
+1. Install the [Claude GitHub app](https://github.com/apps/claude) on the repository.
+2. Run `claude setup-token` and save the token as the repository secret `CLAUDE_CODE_OAUTH_TOKEN`. Reviews then count toward the Claude subscription. To pay per use instead, pass an `ANTHROPIC_API_KEY` secret.
+
+The review never starts on its own. Add the `review` label to a pull request to start one; create the label in the repository first. For another pass after new commits, remove the label and add it again.
+
+| Input | Default | Purpose |
+|---|---|---|
+| `label` | `review` | The label that starts a review |
+| `instructions` | `node_modules/@eweihs/engineering-standards/claude/review.md` | The review instructions to follow |
+| `node-version` | `24` | Node.js version |
+| `max-turns` | `40` | Stop the agent after this many steps |
+| `timeout-minutes` | `10` | Fail a run that takes longer |
+
+Do not make this job a required status check. It reports findings as comments; `check` is the gate.
+
 ## Claude Code
 
 Block the agent from finishing while `check` fails, in the project's `.claude/settings.json`:
@@ -169,6 +213,23 @@ Block the agent from finishing while `check` fails, in the project's `.claude/se
 
 When the agent tries to finish, the hook runs `npm run check` and hands any failure back to it. It skips the run when no file changed since the last passing check, and lets the agent stop after three failed attempts in a row, with a warning. To run a different command, add it after the path.
 
+Add the review as a skill, in the project's `.claude/skills/review-branch/SKILL.md`:
+
+```md
+---
+name: review-branch
+description: Review the current branch against the engineering standards. Use before opening a pull request.
+context: fork
+background: false
+---
+
+Review the changes on the current branch against its base branch.
+
+Follow `node_modules/@eweihs/engineering-standards/claude/review.md`. Give the findings and the summary in your reply. Do not post comments and do not edit files.
+```
+
+`/review-branch` then runs the same review as CI, in a fresh agent that has not seen how the code was written.
+
 Point the project's `CLAUDE.md` at the guidelines that apply:
 
 ```md
@@ -178,6 +239,7 @@ Before making changes, read:
 2. `node_modules/@eweihs/engineering-standards/guidelines/general.md`
 3. `node_modules/@eweihs/engineering-standards/guidelines/files.md`
 4. `node_modules/@eweihs/engineering-standards/guidelines/agents.md`
+5. `node_modules/@eweihs/engineering-standards/guidelines/pull-requests.md`
 ```
 
 ## Changing the standards
