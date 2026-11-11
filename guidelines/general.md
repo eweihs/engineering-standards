@@ -55,6 +55,22 @@ Log IDs and error details instead:
 console.log(`Email sent to customer ${customer.id}`);
 ```
 
+## Dead Code
+
+Delete unused files, exports, dependencies and code paths instead of keeping them "just in case". Git has the history.
+
+Do not comment code out; delete it.
+
+Code that looks unused but is kept on purpose, such as a feature flag that is off, says why in a comment.
+
+Every project has a `lint:unused` script that runs [knip](https://knip.dev) with the shared `knip/next` or `knip/nest` preset:
+
+```json
+"lint:unused": "knip"
+```
+
+Run it before every PR, next to `lint`. ESLint only finds unused code within a file; knip also finds unused files, exports and dependencies.
+
 ## Comments
 
 Explain why, not what. Remove comments that restate the code.

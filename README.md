@@ -15,6 +15,7 @@ My personal, opinionated conventions and tooling for my TypeScript projects. It 
 | `guidelines/styling.md` | Frontends |
 | `guidelines/nestjs.md` | NestJS backends |
 | `eslint/` | `base`, `next` and `nest` presets |
+| `knip/` | `next` and `nest` presets |
 | `prettier.js` | All projects |
 | `tsconfig/base.json` | All projects |
 
@@ -25,7 +26,7 @@ Project-specific facts stay in the project: its purpose, routes, deployment, bra
 Install from a tag, so each project chooses when to update:
 
 ```bash
-npm install --save-dev github:eweihs/engineering-standards#v1.0.0 eslint@9 prettier typescript
+npm install --save-dev github:eweihs/engineering-standards#v1.0.0 eslint@9 knip prettier typescript
 ```
 
 ESLint stays on 9 because `eslint-config-next` depends on plugins that do not support 10 yet.
@@ -52,6 +53,30 @@ export default nest;
 
 ```js
 export { default } from "@eweihs/engineering-standards/prettier";
+```
+
+`knip.config.ts` in a Next.js project (use `knip/nest` in a NestJS project):
+
+```ts
+export { default } from "@eweihs/engineering-standards/knip/next";
+```
+
+Project-specific settings go on top of the preset:
+
+```ts
+import next from "@eweihs/engineering-standards/knip/next";
+
+export default {
+  ...next,
+  ignoreDependencies: ["shadcn"],
+};
+```
+
+`package.json` scripts:
+
+```json
+"lint": "eslint .",
+"lint:unused": "knip"
 ```
 
 `tsconfig.json`:
