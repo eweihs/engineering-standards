@@ -13,6 +13,12 @@ When guidelines conflict:
 2. Simplicity wins.
 3. Reuse existing patterns already present in the codebase.
 
+## Rules Advise, Checks Block
+
+A guideline is advice; people and agents can miss it. If something must never happen, enforce it with a lint rule, a type, a test or a CI step, and keep the guideline only for the reason behind it.
+
+When a review catches the same mistake twice, look for a check that would have caught it first.
+
 ## Dependencies
 
 Add a dependency only when it clearly earns its place. Tools that are only needed during development belong in `devDependencies`.
@@ -26,6 +32,14 @@ Use strict mode. Avoid `any`; prefer `unknown` and narrow it.
 Do not swallow errors. A catch block must handle the error, report it, or rethrow it.
 
 Returning an empty value from a catch block hides failures: an API outage then looks like "no data". Build-time data fetching must fail the build rather than produce a partial site.
+
+When you throw a new error from a catch block, pass the original as its `cause`:
+
+```ts
+throw new Error("Could not load orders", { cause: error });
+```
+
+Await or return every promise. A promise nobody awaits fails silently.
 
 ## Sensitive Data
 
