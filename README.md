@@ -55,15 +55,17 @@ export default nest;
 export { default } from "@eweihs/engineering-standards/prettier";
 ```
 
-`knip.config.ts` in a Next.js project (use `knip/nest` in a NestJS project):
+`knip.config.js` in a Next.js project (use `knip/nest` in a NestJS project):
 
-```ts
+```js
 export { default } from "@eweihs/engineering-standards/knip/next";
 ```
 
+Use `.js`, not `.ts`: the presets have no type declarations, so a `.ts` config fails `tsc`. knip does not look for `knip.config.mjs`.
+
 Project-specific settings go on top of the preset:
 
-```ts
+```js
 import next from "@eweihs/engineering-standards/knip/next";
 
 export default {
