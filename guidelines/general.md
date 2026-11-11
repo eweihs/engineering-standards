@@ -27,6 +27,8 @@ Add a dependency only when it clearly earns its place. Tools that are only neede
 
 Use strict mode. Avoid `any`; prefer `unknown` and narrow it.
 
+Reading from an array or a record by index gives `T | undefined`. Handle the missing case instead of asserting it away with `!`.
+
 ## Error Handling
 
 Do not swallow errors. A catch block must handle the error, report it, or rethrow it.
@@ -83,7 +85,7 @@ Every project has a `lint:unused` script that runs [knip](https://knip.dev) with
 "lint:unused": "knip"
 ```
 
-Run it before every PR, next to `lint`. ESLint only finds unused code within a file; knip also finds unused files, exports and dependencies.
+It runs as part of `check`. ESLint only finds unused code within a file; knip also finds unused files, exports and dependencies.
 
 ## Comments
 

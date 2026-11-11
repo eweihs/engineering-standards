@@ -55,15 +55,17 @@ The project's own `project.md` names the environments, accounts and test-data cl
 
 | Moment | Run |
 |---|---|
-| While working | `test:unit`, `tsc` |
-| Before every PR | `tsc`, `lint`, `lint:unused`, `format:check`, `test:unit`, `test:integration` |
+| While working | `test:unit`, `typecheck` |
+| Before every PR, and in CI on every PR | `check` |
 | Frontend refactor or styling change | `test:visual:update` on `main`, then `test:visual` on the branch |
 | After every deploy to a non-prod environment, frontend or backend | `test:e2e` |
 | After a prod deploy | Read-only checks only; never tests that write data |
 
 Running `test:e2e` after every non-prod deploy also catches mocks that have drifted from the real API.
 
-Projects without CI on pull requests run all of this locally, via a checklist in their PR template.
+`check` runs `typecheck`, `lint`, `lint:unused`, `format:check`, `test:unit` and `test:integration`, in that order, and stops at the first failure.
+
+Every project runs `check` in CI on pull requests that are ready for review, through the shared `check.yml` workflow. Draft pull requests do not run it. A pull request merges only when it is green. Keep the run under five minutes; a slow check gets skipped.
 
 ## Which Test to Write
 
