@@ -14,7 +14,7 @@ My personal, opinionated conventions and tooling for my TypeScript projects. It 
 | `guidelines/hooks.md` | Frontends |
 | `guidelines/styling.md` | Frontends |
 | `guidelines/nestjs.md` | NestJS backends |
-| `eslint/` | `base`, `next` and `nest` presets |
+| `eslint/` | `base`, `next` and `nest` presets, including test quality rules |
 | `knip/` | `next` and `nest` presets |
 | `prettier.js` | All projects |
 | `tsconfig/base.json` | All projects |
@@ -48,6 +48,16 @@ import nest from "@eweihs/engineering-standards/eslint/nest";
 
 export default nest;
 ```
+
+Both presets also lint the tests, with the rules in `eslint/tests.js`:
+
+| Preset | Runner | Files |
+|---|---|---|
+| `next` | Vitest | `*.test.ts` and `*.test.tsx` outside `tests/` |
+| `next` | Playwright | Everything under `tests/` |
+| `nest` | Jest | `*.test.ts`, `*.spec.ts` and everything under `test/` or `tests/` |
+
+`@vitest/eslint-plugin` is pinned to the last version that supports TypeScript 5.
 
 `prettier.config.mjs`:
 
