@@ -10,6 +10,7 @@ My personal, opinionated conventions and tooling for my TypeScript projects. It 
 | `guidelines/files.md` | All projects |
 | `guidelines/git.md` | All projects |
 | `guidelines/testing.md` | All projects |
+| `guidelines/agents.md` | All projects |
 | `guidelines/components.md` | Frontends |
 | `guidelines/hooks.md` | Frontends |
 | `guidelines/styling.md` | Frontends |
@@ -18,6 +19,8 @@ My personal, opinionated conventions and tooling for my TypeScript projects. It 
 | `knip/` | `next` and `nest` presets |
 | `prettier.js` | All projects |
 | `tsconfig/base.json` | All projects |
+| `.github/workflows/check.yml` | Reusable CI workflow for all projects |
+| `claude/check-on-stop.js` | Claude Code hook for all projects |
 
 Project-specific facts stay in the project: its purpose, routes, deployment, brand tokens and components.
 
@@ -77,9 +80,14 @@ export default {
 `package.json` scripts:
 
 ```json
+"typecheck": "tsc --noEmit",
 "lint": "eslint .",
-"lint:unused": "knip"
+"lint:unused": "knip",
+"format:check": "prettier --check .",
+"check": "npm run typecheck && npm run lint && npm run lint:unused && npm run format:check && npm run test:unit && npm run test:integration"
 ```
+
+`check` is the one command that must pass before a change is done. CI and the Claude Code hook below both run it.
 
 `tsconfig.json`:
 
@@ -87,7 +95,69 @@ export default {
 { "extends": "@eweihs/engineering-standards/tsconfig/base.json" }
 ```
 
+## CI
+
+`.github/workflows/check.yml` in the project:
+
+```yaml
+name: Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  check:
+    uses: eweihs/engineering-standards/.github/workflows/check.yml@v3.0.0
+    with:
+      playwright: true
+```
+
+Use the same tag as the installed package. The workflow installs dependencies and runs `npm run check`.
+
+To keep the use of GitHub's runners low, the workflow:
+
+- Runs on pull requests only. A merge to `main` does not run it again, because the pull request was already green.
+- Skips draft pull requests. `ready_for_review` starts the run when a draft is marked ready.
+- Cancels the run in progress when a new commit is pushed to the same pull request.
+- Stops after `timeout-minutes`.
+
+Do not add a `paths` or `paths-ignore` filter. A filtered-out workflow never reports its status, so a required check would block the pull request forever.
+
+| Input | Default | Purpose |
+|---|---|---|
+| `node-version` | `24` | Node.js version |
+| `command` | `npm run check` | The command that must pass |
+| `playwright` | `false` | Install Chromium first, for browser tests |
+| `timeout-minutes` | `10` | Fail a run that takes longer |
+
+A reusable workflow cannot start service containers for its caller. A project whose integration tests need a database writes its own job with that service and runs `npm run check` in it.
+
+Make the `check` job a required status check in the repository's branch protection, so a red pull request cannot merge.
+
 ## Claude Code
+
+Block the agent from finishing while `check` fails, in the project's `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/node_modules/@eweihs/engineering-standards/claude/check-on-stop.js\"",
+            "timeout": 900
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+When the agent tries to finish, the hook runs `npm run check` and hands any failure back to it. It skips the run when no file changed since the last passing check, and lets the agent stop after three failed attempts in a row, with a warning. To run a different command, add it after the path.
 
 Point the project's `CLAUDE.md` at the guidelines that apply:
 
@@ -97,6 +167,7 @@ Before making changes, read:
 1. `.claude/guidelines/project.md`
 2. `node_modules/@eweihs/engineering-standards/guidelines/general.md`
 3. `node_modules/@eweihs/engineering-standards/guidelines/files.md`
+4. `node_modules/@eweihs/engineering-standards/guidelines/agents.md`
 ```
 
 ## Changing the standards

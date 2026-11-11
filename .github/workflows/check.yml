@@ -1,0 +1,49 @@
+# Reusable workflow: runs a project's `check` script on pull requests.
+# Call it from a project with `uses: eweihs/engineering-standards/.github/workflows/check.yml@<tag>`.
+name: Check
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version to run on
+        type: string
+        default: "24"
+      command:
+        description: The command that must pass
+        type: string
+        default: npm run check
+      playwright:
+        description: Install Playwright's Chromium before the check, for browser tests
+        type: boolean
+        default: false
+      timeout-minutes:
+        description: Fail the run when it takes longer than this
+        type: number
+        default: 10
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    # Draft pull requests do not run; the run starts when the draft is marked ready.
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    # A new push cancels the run still in progress for the previous commit.
+    concurrency:
+      group: check-${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: npm
+      - run: npm ci
+      - if: inputs.playwright
+        run: npx playwright install --with-deps chromium
+      - run: bash -c "$CHECK_COMMAND"
+        env:
+          CHECK_COMMAND: ${{ inputs.command }}

@@ -17,6 +17,7 @@
     "./guidelines/*": "./guidelines/*"
   },
   "files": [
+    "claude",
     "eslint",
     "guidelines",
     "knip",
