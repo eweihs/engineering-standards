@@ -9,6 +9,7 @@ My personal, opinionated conventions and tooling for my TypeScript projects. It 
 | `guidelines/general.md` | All projects |
 | `guidelines/files.md` | All projects |
 | `guidelines/git.md` | All projects |
+| `guidelines/testing.md` | All projects |
 | `guidelines/components.md` | Frontends |
 | `guidelines/hooks.md` | Frontends |
 | `guidelines/styling.md` | Frontends |
