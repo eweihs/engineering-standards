@@ -1,6 +1,7 @@
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import base from "./base.js";
+import { jestTests } from "./tests.js";
 
 export default [
   ...base,
@@ -16,4 +17,5 @@ export default [
       "@typescript-eslint/no-misused-promises": "error",
     },
   },
+  jestTests,
 ];

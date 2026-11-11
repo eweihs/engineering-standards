@@ -76,6 +76,31 @@ Every project runs `check` in CI on pull requests that are ready for review, thr
 - A bug fix: a test that fails without the fix, at the lowest level that can reproduce the bug.
 - Before refactoring code that has no test, add one.
 
+## Test Quality
+
+A test earns its place when it fails once the behaviour breaks. A test that cannot fail is worse than no test, because it looks like coverage. More tests is not the goal.
+
+ESLint blocks these in every test file:
+
+- A test without an assertion. A helper that asserts has a name starting with `expect`, such as `expectInvoice`, so lint can see it.
+- `.only` and `.skip`. Playwright's `test.skip(condition, reason)` inside a test stays allowed, such as for a mobile-only check.
+- Commented-out tests. Delete them.
+- An `expect` inside an `if` or a `catch`, which may never run.
+- Empty or duplicate test titles.
+- In Playwright: a fixed wait such as `waitForTimeout`, and an assertion without `await`. Wait for what the user would see instead.
+
+Lint cannot see the rest, so the author and the reviewer check it:
+
+- The title names the behaviour, and the test asserts exactly that.
+- Assert the outcome, not the implementation. Check the returned value or what the user sees, not that an internal function was called.
+- Do not mock the thing under test. Mock only at the edge: the network, the clock and outside services.
+- Do not compute the expected value with the same formula as the code. Write it out.
+- Do not test code without logic, such as getters, constants, re-exports or the framework itself.
+
+When a test fails after a change, decide which of the two is wrong. Never change or delete a test only to make it pass; when an expectation has to change, the commit says why.
+
+For a bug fix, watch the new test fail before applying the fix.
+
 ## Test Data
 
 Use fixtures only. Never real or personal data, in any kind of test.
