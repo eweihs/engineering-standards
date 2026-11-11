@@ -26,6 +26,12 @@ src/
     ProductCard.tsx
 ```
 
+## Size
+
+Keep a file under 300 lines of code, not counting blank lines and comments. ESLint blocks larger files. Split a file that grows past it by responsibility, not by cutting it in half.
+
+Tests and generated or vendored code, such as `components/ui`, are exempt.
+
 ## Utilities
 
 Pure functions belong in the project's utilities folder (`src/lib` or `src/utils`).
