@@ -56,7 +56,7 @@ The project's own `project.md` names the environments, accounts and test-data cl
 | Moment | Run |
 |---|---|
 | While working | `test:unit`, `tsc` |
-| Before every PR | `tsc`, `lint`, `format:check`, `test:unit`, `test:integration` |
+| Before every PR | `tsc`, `lint`, `lint:unused`, `format:check`, `test:unit`, `test:integration` |
 | Frontend refactor or styling change | `test:visual:update` on `main`, then `test:visual` on the branch |
 | After every deploy to a non-prod environment, frontend or backend | `test:e2e` |
 | After a prod deploy | Read-only checks only; never tests that write data |

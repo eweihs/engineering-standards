@@ -10,6 +10,8 @@
     "./eslint/base": "./eslint/base.js",
     "./eslint/next": "./eslint/next.js",
     "./eslint/nest": "./eslint/nest.js",
+    "./knip/next": "./knip/next.js",
+    "./knip/nest": "./knip/nest.js",
     "./prettier": "./prettier.js",
     "./tsconfig/base.json": "./tsconfig/base.json",
     "./guidelines/*": "./guidelines/*"
@@ -17,6 +19,7 @@
   "files": [
     "eslint",
     "guidelines",
+    "knip",
     "tsconfig",
     "prettier.js"
   ],
@@ -29,11 +32,13 @@
   },
   "peerDependencies": {
     "eslint": "^9.39.0",
+    "knip": "^6.45.1",
     "prettier": "^3.9.0",
     "typescript": "^5.9.0"
   },
   "devDependencies": {
     "eslint": "^9.39.0",
+    "knip": "^6.45.1",
     "prettier": "^3.9.0",
     "typescript": "^5.9.0"
   }
