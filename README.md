@@ -12,6 +12,7 @@ My personal, opinionated conventions and tooling for my TypeScript projects. It 
 | `guidelines/testing.md` | All projects |
 | `guidelines/agents.md` | All projects |
 | `guidelines/pull-requests.md` | All projects |
+| `guidelines/releases.md` | All projects |
 | `guidelines/components.md` | Frontends |
 | `guidelines/hooks.md` | Frontends |
 | `guidelines/styling.md` | Frontends |

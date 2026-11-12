@@ -46,7 +46,7 @@ When an agent makes the same mistake twice, fix the instruction or add a check. 
 |---|---|---|
 | Run | The agent acts on its own | Read and edit code, run `check` and tests, commit on a feature branch |
 | Approve | The agent asks first | Push, open a pull request, add a dependency, change CI, hooks or lint config, write a database migration |
-| Decide | A person does it | Merge to `main`, deploy to prod, delete data, handle secrets, change the scope of the work |
+| Decide | A person does it | Merge to `main`, create a release tag, deploy to prod, delete data, handle secrets, change the scope of the work |
 
 A project's `project.md` may move an action to a stricter level, never to a looser one.
 
