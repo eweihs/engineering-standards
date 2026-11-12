@@ -59,6 +59,7 @@ The project's own `project.md` names the environments, accounts and test-data cl
 | Before every PR, and in CI on every PR | `check` |
 | Frontend refactor or styling change | `test:visual:update` on `main`, then `test:visual` on the branch |
 | After every deploy to a non-prod environment, frontend or backend | `test:e2e` |
+| Before tagging a release, on the non-prod deploy of that commit | `test:e2e`, `test:visual` |
 | After a prod deploy | Read-only checks only; never tests that write data |
 
 Running `test:e2e` after every non-prod deploy also catches mocks that have drifted from the real API.
