@@ -64,6 +64,13 @@ jobs:
           TITLE: ${{ github.event.pull_request.title }}
           BODY: ${{ github.event.pull_request.body }}
         run: printf '# %s\n\n%s\n' "$TITLE" "$BODY" > .pull-request.md
+      # The checkout holds one commit without the base branch, so there is nothing to diff
+      # against locally, and the reviewer cannot run git.
+      - name: Save the pull request diff
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh pr diff "$PR" --repo "$GITHUB_REPOSITORY" > .pull-request.diff
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -74,7 +81,8 @@ jobs:
 
             Review this pull request. Follow the instructions in `${{ inputs.instructions }}` exactly.
 
-            The pull request's title and description are in `.pull-request.md`; read them there.
+            The pull request's title and description are in `.pull-request.md`, and its diff
+            against the base branch in `.pull-request.diff`; read them there.
             Run each `gh` command on its own, without pipes, redirects or `&&`: anything else is
             denied. If a command is denied anyway, name it under what you could not check.
 
