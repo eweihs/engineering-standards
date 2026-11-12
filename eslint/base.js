@@ -25,7 +25,9 @@ export const exemptFromMaxLines = {
 };
 
 export default [
-  { ignores: ["dist/**", "coverage/**", "cdk.out/**"] },
+  // Claude Code worktrees are other checkouts of the same repo, with their own build output;
+  // the root-anchored ignores in the presets don't reach into them
+  { ignores: ["dist/**", "coverage/**", "cdk.out/**", ".claude/worktrees/**"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   rules,
