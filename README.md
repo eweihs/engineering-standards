@@ -170,7 +170,7 @@ jobs:
       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 ```
 
-An agent reviews the pull request against `claude/review.md` and comments on it: one inline comment per finding and one summary. It can read the code and comment, nothing else.
+An agent reviews the pull request against `claude/review.md` and comments on it: one inline comment per finding and one summary. It can read the code and comment, nothing else. The workflow saves the pull request's title and description to `.pull-request.md` in the checkout, so the reviewer reads them as a file.
 
 Before the first run:
 
