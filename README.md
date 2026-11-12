@@ -244,6 +244,23 @@ Before making changes, read:
 
 ## Changing the standards
 
-Change this repo, tag a new version, then bump the tag in each project. A new lint rule reaches a project only when that project updates.
+Change this repo, release a new version, then bump the tag in each project. A new lint rule reaches a project only when that project updates.
+
+### Releasing
+
+The version in `package.json` matches the latest tag, because each project's lockfile shows it. Release from an up-to-date `main`, after the pull request is merged:
+
+```bash
+npm version minor -m "chore(release): %s"
+git push --follow-tags
+```
+
+`npm version` updates `package.json` and `package-lock.json`, commits them and creates the tag. Pick the part to raise from the changes since the last tag:
+
+- `patch`: a fix that projects pick up without changes
+- `minor`: something new, such as a guideline, a workflow input or a lint rule that warns
+- `major`: anything a project must act on, such as a lint rule that errors or a renamed workflow input
+
+Then bump the tag in each project's `package.json`, `check.yml` and `review.yml`.
 
 Project examples must stay neutral. If a rule only makes sense for one project, it belongs in that project.
