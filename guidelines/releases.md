@@ -11,7 +11,8 @@ Prod only runs code from a tag. A tag names the exact commit that was tested, so
 3. Run `test:e2e` and `test:visual` against it.
 4. Bump the version on that same commit with `npm version`, which also creates the tag.
 5. Deploy the tag to prod.
-6. Run read-only checks on prod.
+6. Create the GitHub release from the tag, with the changelog as its notes.
+7. Run read-only checks on prod.
 
 Release the commit that passed the tests, not the latest commit on `main`. The release commit that `npm version` adds changes only the version fields, so the code in the tag is the code that was tested. When `main` has moved on in the meantime, release from a branch at the tested commit (see Hotfixes and Late Releases).
 
@@ -39,7 +40,13 @@ git push --follow-tags
 
 `npm version` refuses to run with uncommitted changes. Leave that check on.
 
-Create a GitHub release from the tag. Its notes are the changelog: the bullets of the commits since the last tag, grouped by type.
+Once the tag is deployed to prod, create the GitHub release from it:
+
+```sh
+gh release create "v$(node -p "require('./package.json').version")" --verify-tag --generate-notes
+```
+
+`--verify-tag` stops the command when the tag is not on GitHub yet, instead of creating a new tag. `--generate-notes` fills the notes with the pull requests merged since the previous tag. That list is a draft: edit the release's notes into the changelog, the bullets of the commits since the last tag, grouped by type:
 
 ```md
 Features

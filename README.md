@@ -254,9 +254,10 @@ The version in `package.json` matches the latest tag, because each project's loc
 ```bash
 npm version minor -m "chore(release): %s"
 git push --follow-tags
+gh release create "v$(node -p "require('./package.json').version")" --verify-tag --generate-notes
 ```
 
-`npm version` updates `package.json` and `package-lock.json`, commits them and creates the tag. Pick the part to raise from the changes since the last tag:
+`npm version` updates `package.json` and `package-lock.json`, commits them and creates the tag. `gh release create` publishes the GitHub release for that tag, with the pull requests merged since the previous tag as its notes. Edit them into Features and Fixes, and mark anything a project must act on, so a project can read what changed before it bumps the tag. Pick the part to raise from the changes since the last tag:
 
 - `patch`: a fix that projects pick up without changes
 - `minor`: something new, such as a guideline, a workflow input or a lint rule that warns
