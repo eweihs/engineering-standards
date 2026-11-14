@@ -31,6 +31,7 @@ WIP
 - `feat` — new behaviour for users
 - `fix` — a bug fix
 - `refactor` — a code change that keeps behaviour the same
+- `style` — a change to how something looks, such as colours, spacing or layout, with the same behaviour
 - `test` — tests only
 - `docs` — documentation only
 - `chore` — dependencies, tooling, infrastructure and everything else
