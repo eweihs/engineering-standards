@@ -56,6 +56,8 @@ Fixes
 - Reject expired discount codes at checkout
 ```
 
+Fixes lists only bugs that were in the previous release. A fix to code that is new in this release, such as a review finding on a new feature, is part of that feature's bullet, not a fix. A fix line tells readers that prod was broken.
+
 A person creates the tag; it is the decision to release. An agent may draft the changelog.
 
 The prod deploy refuses to run when the tag does not equal `v` plus the `version` in `package.json`.
