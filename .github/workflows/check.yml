@@ -21,6 +21,10 @@ on:
         description: Fail the run when it takes longer than this
         type: number
         default: 10
+      cache-paths:
+        description: Folders to keep between runs, one per line, such as downloaded browsers or tools
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -41,6 +45,14 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
           cache: npm
+      # Restored from the last run with the same lockfile, or else the latest one, and saved after
+      # a green run with a new lockfile: what the tests download is fetched once, not every run.
+      - if: inputs.cache-paths != ''
+        uses: actions/cache@v6
+        with:
+          path: ${{ inputs.cache-paths }}
+          key: check-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: check-${{ runner.os }}-
       - run: npm ci
       - if: inputs.playwright
         run: npx playwright install --with-deps chromium
