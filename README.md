@@ -144,8 +144,21 @@ Do not add a `paths` or `paths-ignore` filter. A filtered-out workflow never rep
 | `command` | `npm run check` | The command that must pass |
 | `playwright` | `false` | Install Chromium first, for browser tests |
 | `timeout-minutes` | `10` | Fail a run that takes longer |
+| `cache-paths` | none | Folders to keep between runs, one per line |
 
-A reusable workflow cannot start service containers for its caller. A project whose integration tests need a database writes its own job with that service and runs `npm run check` in it.
+Every run starts on a fresh machine, so whatever the tests download, they download again. List those folders in `cache-paths` to keep them: they come back from the last run with the same lockfile, or else the latest one, and are saved after a green run with a new lockfile. For example, Playwright's browsers and a tool the tests fetch on first use:
+
+```yaml
+    with:
+      playwright: true
+      cache-paths: |
+        ~/.cache/ms-playwright
+        ~/.cache/dynamodb-local
+```
+
+With the browsers cached, `playwright: true` still installs Chromium's system packages, but skips the download.
+
+A reusable workflow cannot start service containers for its caller. A project whose integration tests need a database starts it from the tests, such as DynamoDB Local in a Playwright `globalSetup`, or writes its own job with that service and runs `npm run check` in it.
 
 Make the `check` job a required status check in the repository's branch protection, so a red pull request cannot merge.
 
