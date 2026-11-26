@@ -25,6 +25,10 @@ on:
         description: Fail the run when it takes longer than this
         type: number
         default: 10
+      runs-on:
+        description: The runner label to run on, such as a self-hosted runner for a private repo
+        type: string
+        default: ubuntu-latest
     secrets:
       CLAUDE_CODE_OAUTH_TOKEN:
         description: Token from `claude setup-token`; the review counts toward the Claude subscription
@@ -42,7 +46,7 @@ jobs:
   review:
     # Runs only when someone adds the review label to a pull request.
     if: github.event.pull_request && github.event.action == 'labeled' && github.event.label.name == inputs.label
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     # A new run cancels the review still in progress for the same pull request.
     concurrency:
