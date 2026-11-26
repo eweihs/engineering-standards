@@ -145,6 +145,7 @@ Do not add a `paths` or `paths-ignore` filter. A filtered-out workflow never rep
 | `playwright` | `false` | Install Chromium first, for browser tests |
 | `timeout-minutes` | `10` | Fail a run that takes longer |
 | `cache-paths` | none | Folders to keep between runs, one per line |
+| `runs-on` | `ubuntu-latest` | The runner to run on |
 
 Every run starts on a fresh machine, so whatever the tests download, they download again. List those folders in `cache-paths` to keep them: they come back from the last run with the same lockfile, or else the latest one, and are saved after a green run with a new lockfile. For example, Playwright's browsers and a tool the tests fetch on first use:
 
@@ -159,6 +160,15 @@ Every run starts on a fresh machine, so whatever the tests download, they downlo
 With the browsers cached, `playwright: true` still installs Chromium's system packages, but skips the download.
 
 A reusable workflow cannot start service containers for its caller. A project whose integration tests need a database starts it from the tests, such as DynamoDB Local in a Playwright `globalSetup`, or writes its own job with that service and runs `npm run check` in it.
+
+GitHub's runners are free for public repos and paid by the minute for private ones. A private repo can run both workflows on its own runners with `runs-on`, such as a CodeBuild-hosted runner, whose label holds the run's ID:
+
+```yaml
+    with:
+      runs-on: codebuild-github-runner-<repo>-${{ github.run_id }}-${{ github.run_attempt }}
+```
+
+The runner must have what `ubuntu-latest` provides that the workflow uses: `bash`, `git`, `gh` for the review, and `apt-get` with root or `sudo` for `playwright: true`. Never give a public repo a self-hosted runner: anyone could run code on it through a pull request.
 
 Make the `check` job a required status check in the repository's branch protection, so a red pull request cannot merge.
 
@@ -200,6 +210,7 @@ The review never starts on its own. Add the `review` label to a pull request to 
 | `node-version` | `24` | Node.js version |
 | `max-turns` | `40` | Stop the agent after this many steps |
 | `timeout-minutes` | `10` | Fail a run that takes longer |
+| `runs-on` | `ubuntu-latest` | The runner to run on |
 
 Do not make this job a required status check. It reports findings as comments; `check` is the gate.
 

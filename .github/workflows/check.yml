@@ -25,6 +25,10 @@ on:
         description: Folders to keep between runs, one per line, such as downloaded browsers or tools
         type: string
         default: ""
+      runs-on:
+        description: The runner label to run on, such as a self-hosted runner for a private repo
+        type: string
+        default: ubuntu-latest
 
 permissions:
   contents: read
@@ -33,7 +37,7 @@ jobs:
   check:
     # Draft pull requests do not run; the run starts when the draft is marked ready.
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     # A new push cancels the run still in progress for the previous commit.
     concurrency:
       group: check-${{ github.workflow }}-${{ github.ref }}
